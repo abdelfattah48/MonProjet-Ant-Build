@@ -1,0 +1,73 @@
+<project name="appacheant" default="jar" basedir=".">
+
+    <property name="src.dir" value="src/main/java"/>
+    <property name="test.dir" value="src/test/java"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="docs.dir" value="docs"/>
+
+    <!-- Init -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${docs.dir}"/>
+    </target>
+
+    <!-- Compile source files -->
+    <target name="build" depends="init">
+        <javac srcdir="${src.dir}" destdir="${build.dir}"/>
+    </target>
+
+    <!-- Run app -->
+    <target name="run" depends="build">
+        <java classname="com.app.Main" classpath="${build.dir}" fork="true"/>
+    </target>
+
+    <!-- Compile & run JUnit tests -->
+    <target name="test" depends="build">
+        <taskdef name="junit" classname="org.apache.tools.ant.taskdefs.optional.junit.JUnitTask">
+            <classpath>
+                <pathelement path="${lib.dir}/junit-4.10.jar"/>
+            </classpath>
+        </taskdef>
+        <junit printsummary="true" showoutput="true" haltonfailure="false">
+            <classpath>
+                <pathelement path="${build.dir}"/>
+                <pathelement path="${lib.dir}/junit-4.10.jar"/>
+            </classpath>
+            <formatter type="plain"/>
+            <batchtest>
+                <fileset dir="${test.dir}">
+                    <include name="**/*Test.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <!-- Generate JavaDoc -->
+    <target name="doc">
+        <javadoc destdir="${docs.dir}" sourcepath="${src.dir}" verbose="true">
+            <fileset dir="${src.dir}">
+                <include name="**/*.java"/>
+            </fileset>
+        </javadoc>
+    </target>
+
+    <!-- Create JAR -->
+    <target name="jar" depends="build">
+        <jar destfile="${dist.dir}/CalculatorApp.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="com.app.Main"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <!-- Clean build artifacts -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+        <delete dir="${docs.dir}"/>
+    </target>
+
+</project>
