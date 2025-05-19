@@ -1,0 +1,74 @@
+<project name="MonProjet" default="run" basedir=".">
+    <!-- Propriétés -->
+    <property name="src.dir" value="src"/>
+    <property name="build.dir" value="build"/>
+    <property name="dist.dir" value="dist"/>
+    <property name="doc.dir" value="docs"/>
+    <property name="lib.dir" value="lib"/>
+    <property name="main.class" value="main.java.com.Main"/> <!-- À adapter -->
+
+    <!-- Classpath -->
+    <path id="classpath">
+        <fileset dir="${lib.dir}" includes="*.jar"/>
+    </path>
+
+    <!-- Tâche init -->
+    <target name="init">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${dist.dir}"/>
+        <mkdir dir="${doc.dir}"/>
+    </target>
+
+    <!-- Compilation -->
+    <target name="build" depends="init">
+        <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
+            <classpath refid="classpath"/>
+        </javac>
+    </target>
+
+    <!-- Exécution de l'application principale -->
+    <target name="run" depends="build">
+        <java classname="${main.class}" fork="true">
+            <classpath>
+                <pathelement path="${build.dir}"/>
+                <path refid="classpath"/>
+            </classpath>
+        </java>
+    </target>
+
+    <!-- Exécution des tests JUnit 4 -->
+    <target name="test" depends="build">
+        <mkdir dir="${build.dir}/test-reports"/>
+        <junit printsummary="yes" haltonfailure="yes" fork="yes">
+            <classpath>
+                <path refid="classpath"/>
+                <pathelement path="${build.dir}"/>
+            </classpath>
+            <formatter type="plain"/>
+            <batchtest>
+                <fileset dir="${src.dir}">
+                    <include name="com.app.CalculatorTest.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+    <!-- Génération de la documentation JavaDoc -->
+<target name="doc">
+    <!-- Ajout de JUnit au classpath pour Javadoc -->
+    <javadoc sourcepath="${src.dir}" destdir="${doc.dir}">
+        <classpath>
+            <pathelement location="${lib.dir}/junit-4.13.2.jar"/>  <!-- Assure-toi de mettre le bon chemin vers le fichier JAR de JUnit -->
+        </classpath>
+    </javadoc>
+</target>
+
+    <!-- Création du fichier JAR -->
+    <target name="jar" depends="build">
+        <jar destfile="${dist.dir}/MonProjet.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+            </manifest>
+        </jar>
+    </target>
+</project>
