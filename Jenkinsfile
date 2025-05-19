@@ -33,7 +33,7 @@ pipeline {
                 // La directive 'tools' a ajouté l'exécutable Ant au PATH.
                 // Adaptez les cibles (targets) à votre build.xml
                 // Si build.xml n'est pas à la racine : ant(buildFile: 'chemin/vers/build.xml', targets: 'clean compile test package')
-                sh 'ant init build run test doc jar' // Ou 'bat "ant clean compile test package"' pour Windows
+                bat 'ant init build run test doc jar' // Ou 'bat "ant clean compile test package"' pour Windows
                 echo 'Build Ant terminé.'
             }
         }
